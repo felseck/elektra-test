@@ -1,5 +1,5 @@
-import  axios  from "axios";
-import React, {useState,useEffect} from "react";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -9,153 +9,153 @@ import {
 
 const API_URL = "https://gila-software-test.herokuapp.com/api";
 
-function AttributeForm(props) { 
+function AttributeForm(props) {
 
-    let navigate = useNavigate();
-    const {id, action} = props;
-    
-    //iniciamos estados
-    const [error, setError] = useState(null);
+  let navigate = useNavigate();
+  const { id, action } = props;
 
-    const [atributes, setAttributes] = useState([]);
+  //iniciamos estados
+  const [error, setError] = useState(null);
 
-    const [name, setName] = useState('');
+  const [atributes, setAttributes] = useState([]);
+
+  const [name, setName] = useState('');
 
 
 
-    //si existe id obtenemos el los datos y configuramos estados para editar
-    const getAttribute = ()=>{
+  //si existe id obtenemos el los datos y configuramos estados para editar
+  const getAttribute = () => {
 
-        if(!id) return;
+    if (!id) return;
 
-        axios.get(
-          `${API_URL}/attributes/${id}`,{})
-          .then(response => {
+    axios.get(
+      `${API_URL}/attributes/${id}`, {})
+      .then(response => {
 
-            let attribute = response.data;
+        let attribute = response.data;
 
-            setName(attribute.name);
+        setName(attribute.name);
 
-            
-          })
-          .catch(error => {
-            setError(error);
-          });
-      
+
+      })
+      .catch(error => {
+        setError(error);
+      });
+
+  }
+
+
+  //configuramos los parametros
+  var params = {
+    name: name
+  }
+
+  //creamos el atributo
+  const createAttribute = () => {
+
+    axios.post(
+      `${API_URL}/attributes`, params)
+      .then(response => {
+
+        navigate(`/attributes`);
+
+      })
+      .catch(error => {
+        setError(error);
+      });
+
+  }
+
+
+  //actualizamos el atributo
+  const updateAttribute = () => {
+
+
+    axios.put(
+      `${API_URL}/attributes/${id}`, params)
+      .then(response => {
+
+        navigate(`/attributes`);
+
+      })
+      .catch(error => {
+        setError(error);
+      });
+
+  }
+
+  //realizamos la accion de guardar , al crear o editar
+  const saveAttribute = () => {
+
+    if (params.name === '') {
+      alert('Ingresa el nombre');
+      return;
     }
 
 
-    //configuramos los parametros
-    var params = {
-      name:name
+
+    if (action === 'update') {
+      updateAttribute();
+    } else if (action == 'create') {
+      createAttribute();
     }
 
-     //creamos el atributo
-      const createAttribute = ()=>{
-
-          axios.post(
-            `${API_URL}/attributes`,params)
-            .then(response => {
-
-              navigate(`/attributes`);
-              
-            })
-            .catch(error => {
-              setError(error);
-            });
-        
-      }
-
-
-     //actualizamos el atributo
-      const updateAttribute = ()=>{
-          
-       
-          axios.put(
-            `${API_URL}/attributes/${id}`,params)
-            .then(response => {
-
-              navigate(`/attributes`);
-              
-            })
-            .catch(error => {
-              setError(error);
-            });
-        
-      }
-
-      //realizamos la accion de guardar , al crear o editar
-      const saveAttribute= ()=>{
-
-        if(params.name == '') {
-            alert('Ingresa el nombre');
-            return;
-        }
+  }
 
 
 
-        if(action == 'update'){
-          updateAttribute();
-        }else if(action == 'create'){
-          createAttribute();
-        }
-      
-      }
+  //obtenemos los atributos
+  const getAttributes = () => {
+
+    const params = {
+    }
+
+    axios.get(
+      `${API_URL}/attributes`, params)
+      .then(response => {
+
+        setAttributes(response.data);
+
+      })
+      .catch(error => {
+        setError(error);
+      });
+
+  }
 
 
 
-      //obtenemos los atributos
-      const getAttributes = ()=>{
 
-        const params = {
-        }
-      
-          axios.get(
-            `${API_URL}/attributes`,params)
-            .then(response => {
+  //obtenemos datos al inicar el componente
+  useEffect(() => {
 
-              setAttributes(response.data);
-              
-            })
-            .catch(error => {
-              setError(error);
-            });
-        
-      }
+    getAttribute();
 
-    
+  }, [])
 
 
-      //obtenemos datos al inicar el componente
-      useEffect(()=>{
 
-        getAttribute();
-
-      },[])
-
-     
-     
-      //mostramos un error en caso de que suceda
-      if(error){
-        alert(error);
-        setError(null);
-      }
+  //mostramos un error en caso de que suceda
+  if (error) {
+    alert(error);
+    setError(null);
+  }
 
 
-    return (
-        <div>
-        <h1>{action=='update'?'Editar':'Crear'} Atributo</h1>
-        <form>
-           <div className="form-group">
-              <label htmlFor="create-name">Nombre</label>
-              <input type="text" required defaultValue={name} onBlur={(e)=>{setName(e.target.value)}} className="form-control" id="create-name" placeholder="nombre" />
-           </div>
-           
+  return (
+    <div>
+      <h1>{action == 'update' ? 'Editar' : 'Crear'} Atributo</h1>
+      <form>
+        <div className="form-group">
+          <label htmlFor="create-name">Nombre</label>
+          <input type="text" required defaultValue={name} onBlur={(e) => { setName(e.target.value) }} className="form-control" id="create-name" placeholder="nombre" />
+        </div>
 
-           <button type="button" className="mt-5 btn btn-primary" onClick={saveAttribute}>Guardar</button>
-        </form>
-     </div>
-    )
+
+        <button type="button" className="mt-5 btn btn-primary" onClick={saveAttribute}>Guardar</button>
+      </form>
+    </div>
+  )
 
 }
 

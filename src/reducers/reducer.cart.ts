@@ -22,15 +22,15 @@ const getCart = ()=>{
   return cart;
 }
 
-const addToCart = (item,qty)=>{
+const addToCart = (item_,qty)=>{
 
-  const total = qty*item.price;
+  const total = qty*item_.price;
 
   //configuramos item
   var item = {
-    'id':item.id,
-    'name':item.name,
-    'price':item.price,
+    'id':item_.id,
+    'name':item_.name,
+    'price':item_.price,
     'total':total,
     'qty':qty
   }
@@ -48,13 +48,19 @@ const addToCart = (item,qty)=>{
 
 }
 
-const cart = (item = [], action) => {
+interface Action{
+  item:object,
+  type:string,
+  qty:number
+}
 
-   if(action.type == 'ADD'){
+const cart = (item:[] = [], action: Action) => {
+
+   if(action.type === 'ADD'){
       return addToCart(action.item, action.qty); 
    }
 
-   if(action.type == 'CLEAR'){
+   if(action.type === 'CLEAR'){
     return clearCart(); 
   }
 
@@ -62,4 +68,6 @@ const cart = (item = [], action) => {
 
 
   };
+
+
   export default cart;

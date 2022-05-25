@@ -19,12 +19,28 @@ import AttributeUpdate from "./pages/page.attribute.update";
 import Cart from "./pages/page.cart";
 
 import { useSelector, useDispatch } from "react-redux";
+import {logIn, logOut} from "./actions/actions.auth.js";
 
 
 function Router() { 
   
 
+  const auth = useSelector((state) => state.auth);
   const cart = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+  
+  if(!auth){
+
+    return (
+      <div className="card border-primary mb-3">
+      <div className="card-header">Login</div>
+      <div className="card-body text-primary">
+        <button className="btn btn-success" onClick={()=>dispatch(logIn())}>Entrar</button>
+      </div>
+      </div>
+    )
+
+  }
 
   
 
@@ -43,6 +59,7 @@ function Router() {
             <li className="breadcrumb-item"><Link to="/attributes">Atributos</Link></li>
 
             <li className="breadcrumb-item"><Link to="/cart">Carrito {cart.length}</Link></li>
+            <li className="breadcrumb-item"><button className="btn btn-info" onClick={()=>dispatch(logOut())} >Salir</button></li>
 
           </ol>
         </nav>

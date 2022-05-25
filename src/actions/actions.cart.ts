@@ -1,5 +1,5 @@
 
-export const add = (item,qty) => {
+export const add = (item:object,qty:number) => {
   
     return {
       'type': "ADD",

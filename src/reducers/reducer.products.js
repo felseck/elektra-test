@@ -6,24 +6,23 @@ let initialState = {
   };
   
   function products(state = initialState, action) {
-    var foundIndex = 0;
-    var foundIndexCart = 0;
+    
     var { data,  total } = state;
     switch (action.type) {
-      case "FETCH_DATA_REQUEST":
+      case "REQUEST_START":
         return {
           ...state,
           loading: true,
           error: null
         };
-      case "FETCH_DATA_SUCCESS":
+      case "REQUEST_SUCCESS":
         return {
           ...state,
           loading: false,
           data: action.data,
           total:action.data.length
         };
-      case "FETCH_DATA_ERROR":
+      case "REQUEST_ERROR":
         return {
           ...state,
           loading: false,

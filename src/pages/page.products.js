@@ -1,118 +1,100 @@
-import React, {useState,useEffect} from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { Link } from "react-router-dom";
-import  axios  from "axios";
-
-const API_URL = "https://gila-software-test.herokuapp.com/api";
-
-function Products() { 
-
-    const [Products, setProducts] = useState([]);
-    const [error, setError] = useState(null);
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { getProducts } from "../requests/request.products.get";
+import { deleteProduct } from "../requests/request.product.delete";
+import Errors from "../components/component.errors"
 
 
+function Products(props, context) {
 
 
-      const getProducts = ()=>{
-      
-          axios.get(
-            `${API_URL}/products`,{
-                params: {
-                 //id : 12345
-                }
-              })
-            .then(response => {
-              setProducts(response.data);
-            })
-            .catch(error => {
-              setError(error);
-            });
-        
+  const products = useSelector((state) => state.products);
+
+
+  const dispatch = useDispatch();
+
+  /*const getProducts = useCallback(() => {
+
+    axios.get(
+      `${API_URL}/products`, {
+      params: {
+        //id : 12345
       }
+    })
+      .then(response => {
+        setProducts(response.data);
+      })
+      .catch(error => {
+        setError(error);
+      });
 
-      useEffect(()=>{
+  }, [API_URL])*/
 
-        getProducts();
+  useEffect(() => {
 
-      },[])
+    //getProducts();
+
+    dispatch(getProducts())
+
+  }, [dispatch])
 
 
+  return (
+    <div>
+
+      <Errors />
+
+      <h1>Productos</h1>
+
+      <Link to={`/product/create`} className="btn btn-success" >Agregar nuevo producto</Link>
 
 
-      const deleteProduct = ($id)=>{ 
-          if(!window.confirm('¿Desea eliminar este producto?')) return;
+      <div className="table-responsive">
 
-          axios.delete(
-            `${API_URL}/products/${$id}`,{
-                params: {
-                 //id : 12345
-                }
-              })
-            .then(response => {
-                getProducts();
-            })
-            .catch(error => {
-              setError(error);
-            });
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Costo</th>
+              <th scope="col">Precio</th>
+              <th scope="col">Sku</th>
+              <th scope="col">Categoria</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
 
-          
-      }
+            {products.data.map((product, index) => {
+              return (
+                <tr key={`${index}_${product.id}`}>
+                  <th scope="row">{product.id}</th>
+                  <td>{product.name}</td>
+                  <td>${product.cost}</td>
+                  <td>${product.price}</td>
+                  <td>{product.sku}</td>
+                  <td>{product.category ? product.category.name : ''}</td>
+                  <td>
 
-      if(error){
-          alert(error);
-          setError(null);
-      }
+                    <div className="btn-group" role="group" aria-label="Acciones">
+                      <Link to={`/product/details/${product.id}`} className="btn btn-info" >Detalles</Link>
+                      <Link to={`/product/update/${product.id}`} className="btn btn-primary" >Editar</Link>
+                      <button type="button" className="btn btn-danger" onClick={(e) => dispatch(deleteProduct(product.id))}>Eliminar</button>
+                    </div>
 
-    return (
-         <div>
-             <h1>Productos</h1>
-             
-             <Link to={`/product/create`} className="btn btn-success" >Agregar nuevo producto</Link>
+                  </td>
+                </tr>
+              )
+            })}
 
-             
-             <div className="table-responsive">
-  
-             <table className="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Nombre</th>
-      <th scope="col">Costo</th>
-      <th scope="col">Precio</th>
-      <th scope="col">Sku</th>
-      <th scope="col">Categoria</th>
-      <th scope="col">Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
+          </tbody>
+        </table>
 
-  {Products.map((product,index)=>{
-    return (
-    <tr key={`${index}_${product.id}`}>
-      <th scope="row">{product.id}</th>
-      <td>{product.name}</td>
-      <td>${product.cost}</td>
-      <td>${product.price}</td> 
-      <td>{product.sku}</td>
-      <td>{product.category?product.category.name:''}</td>
-      <td>
-
-      <div className="btn-group" role="group" aria-label="Acciones">
-      <Link to={`/product/details/${product.id}`} className="btn btn-info" >Detalles</Link>
-      <Link to={`/product/update/${product.id}`} className="btn btn-primary" >Editar</Link>
-      <button type="button" className="btn btn-danger" onClick={(e)=> deleteProduct(product.id)}>Eliminar</button>
       </div>
-
-      </td>
-    </tr>
-    )
-    })}
-    
-  </tbody>
-</table>
-
-</div>
-</div>
-    )
+    </div>
+  )
 
 }
 

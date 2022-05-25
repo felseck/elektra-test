@@ -1,6 +1,6 @@
 import React, {useState,useEffect} from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {clear} from "../actions/actions.cart.js";
+import {clear} from "../actions/actions.cart.ts";
 
 
 
