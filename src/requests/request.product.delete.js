@@ -5,7 +5,7 @@ import { errorOcurred, clearError } from "../actions/actions.errors";
 
 export function deleteProduct(id) {
 
-  if (!window.confirm('¿Desea eliminar este producto?')) return;
+  if (!window.confirm('¿Desea eliminar este producto?')) return dispatch => {};
 
   return dispatch => {
     dispatch(clearError());
